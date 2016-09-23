@@ -1,0 +1,78 @@
+﻿@model Couchcase.Models.MainModel
+@{
+    ViewBag.Title = "The #Couchbase Couchcase";
+}
+
+<div class="row">
+    @if (Model.Errors != null && Model.Errors.Any())
+    {
+        <div class="panel panel-danger">
+            <div class="panel-heading">Errors</div>
+            <div class="panel-body">
+                <table class="table">
+                    <tr><th>Key</th><th>Error</th></tr>
+                    @foreach (var error in Model.Errors)
+                    {
+                        <tr><td>@error.Key</td><td>@error.Value</td></tr>
+                    }
+                </table>
+            </div>
+        </div>
+    }
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Total Documents in <strong>@Model.BucketName</strong> bucket
+        </div>
+        <div class="panel-body">@Model.TotalDocuments</div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Magic Ten (doc0,doc1,...,doc9)</div>
+        <div class="panel-body">
+            <table class="table">
+                <tr>
+                    <th>Key</th>
+                    <th>Active</th>
+                    <th>Replica</th>
+                    <th>&nbsp;</th>
+                </tr>
+                @foreach (var doc in Model.MagicTen)
+                {
+                    <tr>
+                        <td>@doc.Key</td>
+                        
+                        @* active document*@
+                        @if (doc.Value.Active.Success)
+                        {
+                            <td style="background-color: lightgreen;">@doc.Value.Active.Value</td>
+                        }
+                        else
+                        {
+                            <td style="background-color: lightcoral;">@doc.Value.Active.Status</td>
+                        }
+                        
+                        @* replica document *@
+                        @if (doc.Value.Replica.Success)
+                        {
+                            <td style="background-color: lightgreen;">@doc.Value.Replica.Value</td>
+                        }
+                        else
+                        {
+                            <td style="background-color: yellow;">@doc.Value.Replica.Status</td>
+                        }
+                        
+                        @* delete *@
+                        @if (doc.Value.Active.Success)
+                        {
+                            <td>@Html.ActionLink("Delete", "DeleteDocument", new {id = doc.Key})</td>
+                        }
+                        else
+                        {
+                            <td>&nbsp;</td>
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>
