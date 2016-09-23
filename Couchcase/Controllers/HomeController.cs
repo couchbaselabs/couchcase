@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Web.Mvc;
 using Couchbase;
 using Couchcase.Models;
@@ -8,10 +9,12 @@ namespace Couchcase.Controllers
     public class HomeController : Controller
     {
         private readonly Repository _repo;
+        private readonly string _bucketName;
 
         public HomeController()
         {
-            _repo = new Repository(ClusterHelper.GetBucket("default"));
+            _bucketName = ConfigurationManager.AppSettings["CouchbaseBucketName"];
+            _repo = new Repository(ClusterHelper.GetBucket(_bucketName));
         }
 
         public ActionResult Index()
@@ -20,7 +23,7 @@ namespace Couchcase.Controllers
             {
                 TotalDocuments = _repo.GetNumDocuments(),
                 MagicTen = _repo.GetMagicTen(),
-                BucketName = _repo.BucketName,
+                BucketName = _bucketName,
                 Errors = (IDictionary<string,string>)TempData["FlashMessage"]
             };
             return View(model);

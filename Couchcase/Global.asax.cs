@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Couchbase;
@@ -15,9 +16,15 @@ namespace Couchcase
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
+            var node1Uri = ConfigurationManager.AppSettings["CouchbaseNode1"];
+            var node2Uri = ConfigurationManager.AppSettings["CouchbaseNode2"];
+            var node3Uri = ConfigurationManager.AppSettings["CouchbaseNode3"];
+
             var config = new ClientConfiguration();
             config.Servers = new List<Uri> {
-                new Uri("couchbase://localhost")
+                new Uri(node1Uri),
+                new Uri(node2Uri),
+                new Uri(node3Uri)
             };
             ClusterHelper.Initialize(config);
         }

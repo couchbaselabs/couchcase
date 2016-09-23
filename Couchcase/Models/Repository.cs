@@ -17,8 +17,6 @@ namespace Couchcase.Models
             _bucket = bucket;
         }
 
-        public string BucketName => _bucket.Name;
-
         public int GetNumDocuments()
         {
             var n1ql = $"SELECT COUNT(1) AS numDocuments FROM `{_bucket.Name}`;";

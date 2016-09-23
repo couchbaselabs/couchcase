@@ -6,7 +6,9 @@ This app is meant to demonstrate Couchbase's clustering, replication, and failov
 
 This app was made to demonstrate a 3-node cluster, with a bucket that has replicas enabled, and creates 2 replicas.
 
-[todo - web.config setup instructions]
+In Web.config, there are 4 settings:
+* CouchbaseBucketName - This is the name of the bucket you want to use. The bucket should have at least a primary index.
+* CouchbaseNode1,2,3 - These are the URIs to the three nodes in the cluster (e.g. "couchbase://localhost", "couchbase://192.168.1.10", etc). Technically, you only need one, but if you plan to unplug nodes at random, it's best if you have all three.
 
 ## What is demonstrated?
 
