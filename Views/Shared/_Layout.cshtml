@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("The #Couchbase Couchcase Demo", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        <div class="col-md-2">
+            <div class="list-group">
+                @Html.ActionLink("Reset Magic 10", "CreateMagic10", "Home", null, new { @class="list-group-item"})
+                @Html.ActionLink("Update All Magic 10", "UpdateMagic10", "Home", null, new { @class = "list-group-item" })
+@*                @Html.ActionLink("Add 10 arbitrary documents", "CreateArbitrary10", "Home", null, new { @class = "list-group-item" })*@
+@*                @Html.ActionLink("Delete all Arbitrary", "DeleteAllArbitrary", "Home", null, new { @class = "list-group-item" })*@
+            </div>
+        </div>
+        <div class="col-md-10">
+            @RenderBody()
+        </div>
+        <hr/>
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Couchbase Developer Advocate Team</p>
+        </footer>
+    </div>
+    <script src="~/js/jquery-3.1.1.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
