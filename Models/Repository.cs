@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.Core;
 using Couchbase.N1QL;
@@ -55,37 +52,6 @@ namespace Couchcase.Models
             return dict;
         }
 
-        public Dictionary<string, string> CreateArbitrary(int numDocumentsToCreate)
-        {
-            var errorDict = new Dictionary<string, string>();
-            for (int i = 0; i < numDocumentsToCreate; i++)
-            {
-                var id = Guid.NewGuid().ToString();
-                var result = _bucket.Insert(new Document<dynamic>
-                {
-                    Id = id,
-                    Content = new
-                    {
-                        CreatedAt = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"),
-                        SomeRandomText = Path.GetRandomFileName(),
-                        Type = "arbitrary"
-                    }
-                });
-                if (!result.Success)
-                    errorDict.Add(id, result.Message);
-            }
-            return errorDict;
-        }
-
-        public void DeleteAllArbitrary()
-        {
-            var n1ql = $"DELETE FROM `{_bucket.Name}` WHERE type='arbitrary';";
-            var query = QueryRequest.Create(n1ql);
-            query.ScanConsistency(ScanConsistency.RequestPlus);
-            _bucket.Query<dynamic>(query);
-            Thread.Sleep(1000); // hack because ScanConsistency doesn't seem to work with DELETE?
-        }
-
         public Dictionary<string, string> UpdateMagic10()
         {
             var errorDict = new Dictionary<string, string>();
@@ -98,7 +64,7 @@ namespace Couchcase.Models
                     Content = new
                     {
                         Title = $"Document #{i}",
-                        Updated = DateTime.Now,
+                        Updated = GetDateTimeNowFormatted(),
                         Type = "Magic"
                     }
                 });
@@ -111,6 +77,21 @@ namespace Couchcase.Models
         public void DeleteDocument(string id)
         {
             _bucket.Remove(id);
+        }
+
+        public void TouchDocument(string id)
+        {
+            var doc = _bucket.Get<dynamic>(id).Value;
+            doc.updated = GetDateTimeNowFormatted();
+            _bucket.Replace(new Document<dynamic> {
+                Id = id,
+                Content = doc
+            });
+        }
+
+        private string GetDateTimeNowFormatted()
+        {
+            return DateTime.Now.ToString("M/d/yy h:mm:ss.fff");
         }
     }
 }

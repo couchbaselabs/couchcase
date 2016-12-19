@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Couchbase;
+﻿using Couchbase;
 using Couchcase.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,10 +19,7 @@ namespace Couchcase.Controllers
         {
             var model = new MainModel
             {
-                //TotalDocuments = _repo.GetNumDocuments(),
-                MagicTen = _repo.GetMagicTen(),
-                BucketName = _bucketName //,
-                //Errors = (IDictionary<string,string>)TempData["FlashMessage"]
+                MagicTen = _repo.GetMagicTen()
             };
             return View(model);
         }
@@ -34,24 +30,15 @@ namespace Couchcase.Controllers
             return RedirectToAction("Index");
         }
 
-        public RedirectToActionResult CreateArbitrary10()
-        {
-            var errors = _repo.CreateArbitrary(10);
-            //TempData["FlashMessage"] = errors;
-            return RedirectToAction("Index");
-        }
-
-        public RedirectToActionResult DeleteAllArbitrary()
-        {
-            _repo.DeleteAllArbitrary();
-            return RedirectToAction("Index");
-        }
-
-        public RedirectToActionResult UpdateMagic10()
+        public ActionResult UpdateMagic10()
         {
             var errors = _repo.UpdateMagic10();
-            //TempData["FlashMessage"] = errors;
-            return RedirectToAction("Index");
+            var model = new MainModel
+            {
+                MagicTen = _repo.GetMagicTen(),
+                Errors = errors
+            };
+            return View("Index", model);
         }
 
         public RedirectToActionResult DeleteDocument(string id)
@@ -59,5 +46,12 @@ namespace Couchcase.Controllers
             _repo.DeleteDocument(id);
             return RedirectToAction("Index");
         }
+
+        public RedirectToActionResult TouchDocument(string id)
+        {
+            _repo.TouchDocument(id);
+            return RedirectToAction("Index");
+        }
+
     }
 }

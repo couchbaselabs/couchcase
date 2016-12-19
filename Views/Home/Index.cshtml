@@ -19,13 +19,7 @@
             </div>
         </div>
     }
-@*
-    <div class="panel panel-default">
-        <div class="panel-heading">Total Documents in <strong>@Model.BucketName</strong> bucket
-        </div>
-        <div class="panel-body">@Model.TotalDocuments</div>
-    </div>
-*@
+
     <div class="panel panel-default">
         <div class="panel-heading">Magic Ten (doc0,doc1,...,doc9)</div>
         <div class="panel-body">
@@ -64,7 +58,11 @@
                         @* delete *@
                         @if (doc.Value.Active.Success)
                         {
-                            <td>@Html.ActionLink("Delete", "DeleteDocument", new {id = doc.Key})</td>
+                            <td>
+                                @Html.ActionLink("Delete", "DeleteDocument", new {id = doc.Key})
+                                |
+                                @Html.ActionLink("Touch", "TouchDocument", new {id = doc.Key})
+                            </td>
                         }
                         else
                         {
