@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.Core;
 using Couchbase.N1QL;
@@ -19,10 +20,11 @@ namespace Couchcase.Models
 
         public int GetNumDocuments()
         {
-            var n1ql = $"SELECT COUNT(1) AS numDocuments FROM `{_bucket.Name}`;";
+            var n1ql = $"SELECT COUNT(1) AS numDocuments FROM `{_bucket.Name}` WHERE type = 'Magic';";
             var query = QueryRequest.Create(n1ql);
-            query.ScanConsistency(ScanConsistency.RequestPlus);
-            return _bucket.Query<dynamic>(query).Rows[0].numDocuments;
+            query.Timeout(new TimeSpan(0, 0, 5));
+            var queryResult =  _bucket.Query<dynamic>(query);
+            return queryResult.Rows[0].numDocuments;
         }
 
         public void CreateMagic10()
@@ -31,7 +33,8 @@ namespace Couchcase.Models
                 _bucket.Upsert(new Document<dynamic> {
                     Id = "doc" + i,
                     Content = new {
-                        Title = $"Document #{i}"
+                        Title = $"Document #{i}",
+                        Type = "Magic"
                     }
                 });
         }
@@ -52,17 +55,26 @@ namespace Couchcase.Models
             return dict;
         }
 
-        public void CreateArbitrary(int numDocumentsToCreate)
+        public Dictionary<string, string> CreateArbitrary(int numDocumentsToCreate)
         {
+            var errorDict = new Dictionary<string, string>();
             for (int i = 0; i < numDocumentsToCreate; i++)
-                _bucket.Insert(new Document<dynamic> {
-                    Id = Guid.NewGuid().ToString(),
-                    Content = new {
+            {
+                var id = Guid.NewGuid().ToString();
+                var result = _bucket.Insert(new Document<dynamic>
+                {
+                    Id = id,
+                    Content = new
+                    {
                         CreatedAt = DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString(),
                         SomeRandomText = Path.GetRandomFileName(),
                         Type = "arbitrary"
                     }
                 });
+                if (!result.Success)
+                    errorDict.Add(id, result.Message);
+            }
+            return errorDict;
         }
 
         public void DeleteAllArbitrary()
@@ -86,7 +98,8 @@ namespace Couchcase.Models
                     Content = new
                     {
                         Title = $"Document #{i}",
-                        Updated = DateTime.Now
+                        Updated = DateTime.Now,
+                        Type = "Magic"
                     }
                 });
                 if(!result.Success)

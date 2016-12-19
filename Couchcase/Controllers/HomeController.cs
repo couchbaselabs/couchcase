@@ -21,7 +21,7 @@ namespace Couchcase.Controllers
         {
             var model = new MainModel
             {
-                TotalDocuments = _repo.GetNumDocuments(),
+                //TotalDocuments = _repo.GetNumDocuments(),
                 MagicTen = _repo.GetMagicTen(),
                 BucketName = _bucketName,
                 Errors = (IDictionary<string,string>)TempData["FlashMessage"]
@@ -37,7 +37,8 @@ namespace Couchcase.Controllers
 
         public RedirectToRouteResult CreateArbitrary10()
         {
-            _repo.CreateArbitrary(10);
+            var errors = _repo.CreateArbitrary(10);
+            TempData["FlashMessage"] = errors;
             return RedirectToAction("Index");
         }
 
