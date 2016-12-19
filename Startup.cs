@@ -73,12 +73,12 @@ namespace WebApplication
                 //new Uri("couchbase://192.168.1.30"),
 
                 // local
-                new Uri("couchbase://localhost"),
+                //new Uri("couchbase://localhost"),
 
                 // docker
-                //new Uri("couchbase://1"),
-                //new Uri("couchbase://1"),
-                //new Uri("couchbase://1")
+                new Uri("couchbase://172.17.0.2"),
+                new Uri("couchbase://172.17.0.3"),
+                new Uri("couchbase://172.17.0.4")
             };
             ClusterHelper.Initialize(new ClientConfiguration{
                 Servers = servers

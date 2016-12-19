@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  web:
+    image: microsoft/aspnet
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80"
