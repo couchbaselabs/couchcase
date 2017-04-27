@@ -1,5 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.Configuration.Client;
 using Microsoft.AspNetCore.Builder;
@@ -8,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace WebApplication
+namespace couchcase
 {
     public class Startup
     {
@@ -16,14 +18,9 @@ namespace WebApplication
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
-
-            if (env.IsDevelopment())
-            {
-            }
-
-            builder.AddEnvironmentVariables();
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
 
@@ -33,7 +30,6 @@ namespace WebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-
             services.AddMvc();
         }
 
@@ -46,7 +42,6 @@ namespace WebApplication
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
             else
             {
@@ -55,15 +50,12 @@ namespace WebApplication
 
             app.UseStaticFiles();
 
-            // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
-            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
 
             // setup Couchbase
             var servers = new List<Uri> {
@@ -80,7 +72,8 @@ namespace WebApplication
                 new Uri("couchbase://172.17.0.3"),
                 new Uri("couchbase://172.17.0.4")
             };
-            ClusterHelper.Initialize(new ClientConfiguration{
+            ClusterHelper.Initialize(new ClientConfiguration
+            {
                 Servers = servers
             });
         }
